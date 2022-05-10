@@ -16,7 +16,7 @@ function App() {
         {
           Object.keys(lineDataDict).map((key, index) => {
             let bgColor = 'lightblue'
-            if (structureDict.RP.includes(key)) bgColor = 'gray'
+            if (structureDict.RP.includes(key)) bgColor = 'yellow'
             else if (structureDict.SDL.includes(key)) bgColor = 'orange'
             else if (structureDict.UL.includes(key)) bgColor = 'pink'
             return (<Tab style={{ backgroundColor: bgColor }} key={index}>{key.replaceAll('_', ' ')}</Tab>)
