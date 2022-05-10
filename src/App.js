@@ -6,9 +6,9 @@ import StatResponsiveLine from './components/line';
 import { lineDataDict } from './data/lineData'
 
 function App() {
-  const RPList = ['UN1']
-  const SDLList = ['KN', 'KL', 'Spirit', 'RinOne']
-  const ULList = ['Eternal_Love', 'KT', 'Honest', 'Skill', 'Navigator']
+
+  const structureDict = require('./data/structure_data.json')
+
   return (
     <div className="App">
       <Tabs style={{ marginTop: '50px' }}>
@@ -16,9 +16,9 @@ function App() {
         {
           Object.keys(lineDataDict).map((key, index) => {
             let bgColor = 'lightblue'
-            if (RPList.includes(key)) bgColor = 'gray'
-            else if (SDLList.includes(key)) bgColor = 'orange'
-            else if (ULList.includes(key)) bgColor = 'pink'
+            if (structureDict.RP.includes(key)) bgColor = 'gray'
+            else if (structureDict.SDL.includes(key)) bgColor = 'orange'
+            else if (structureDict.UL.includes(key)) bgColor = 'pink'
             return (<Tab style={{ backgroundColor: bgColor }} key={index}>{key.replaceAll('_', ' ')}</Tab>)
           })
         }
@@ -29,7 +29,7 @@ function App() {
             ([key, value], index) => {
               return (
                 <TabPanel>
-                  <div style={{ height: "400px", width: "75%", margin: "0 auto"}} key={index}>
+                  <div style={{ height: "700px", width: "75%", margin: "0 auto"}} key={index}>
                     <h2 style={{ textAlign: 'center' }} >{key.replaceAll('_', ' ')}</h2>
                     <StatResponsiveLine data={value}/>
                     <hr/>
