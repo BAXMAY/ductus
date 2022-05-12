@@ -1,4 +1,4 @@
-export const lineDataDict = require('nivo_data.json')
+export const lineDataDict = require('../../nivo_data.json')
 
 // export const lineData = [
 //   {
