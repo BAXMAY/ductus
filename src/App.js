@@ -3,14 +3,28 @@ import { Tabs, Tab, TabList, TabPanel } from 'react-tabs';
 import './App.css';
 import 'react-tabs/style/react-tabs.css';
 import StatResponsiveLine from './components/line';
-import { lineDataDict } from './data/lineData'
+// import { lineDataDict } from './data/lineData';
+import axios from 'axios';
+import { useState } from 'react';
 
 function App() {
 
   const structureDict = require('./data/structure_data.json')
 
+  const [lineDataDict, setLineData] = useState({});
+
+  const fetchLineData = () => {
+    axios
+      .get("https://propagatio.onrender.com/fetch/")
+      .then((res) => setLineData(res.data))
+      .catch((err) => console.log(err));
+  }
+
+  fetchLineData()
+
   return (
     <div className="App">
+      <button onClick={fetchLineData()}>FETCH</button>
       <Tabs style={{ marginTop: '50px' }}>
         <TabList>
         {
@@ -29,7 +43,7 @@ function App() {
             ([key, value], index) => {
               return (
                 <TabPanel>
-                  <div style={{ height: "700px", width: "75%", margin: "0 auto"}} key={index}>
+                  <div style={{ height: "70vh", width: "75%", margin: "0 auto"}} key={index}>
                     <h2 style={{ textAlign: 'center' }} >{key.replaceAll('_', ' ')}</h2>
                     <StatResponsiveLine data={value}/>
                     <hr/>
