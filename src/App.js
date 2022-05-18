@@ -26,7 +26,7 @@ function App() {
 
   return (
     <div className="App">
-      <button onClick={fetchLineData()}>FETCH</button>
+      <button onClick={fetchLineData}>FETCH</button>
       <Tabs style={{ marginTop: '50px' }}>
         <TabList>
         {
