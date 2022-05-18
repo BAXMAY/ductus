@@ -15,7 +15,7 @@ function App() {
 
   const fetchLineData = () => {
     axios
-      .get("https://propagatio.onrender.com/fetch/")
+      .get("https://propagatio.onrender.com/fetch")
       .then((res) => setLineData(res.data))
       .catch((err) => console.log(err));
   }
