@@ -5,7 +5,7 @@ import 'react-tabs/style/react-tabs.css';
 import StatResponsiveLine from './components/line';
 // import { lineDataDict } from './data/lineData';
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 function App() {
 
@@ -20,7 +20,9 @@ function App() {
       .catch((err) => console.log(err));
   }
 
-  fetchLineData()
+  useEffect(() => {
+    fetchLineData()
+  }, [])
 
   return (
     <div className="App">
