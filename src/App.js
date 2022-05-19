@@ -4,8 +4,14 @@ import './App.css';
 import 'react-tabs/style/react-tabs.css';
 import StatResponsiveLine from './components/line';
 // import { lineDataDict } from './data/lineData';
-import axios from 'axios';
+// import axios from 'axios';
 import { useEffect, useState } from 'react';
+
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = process.env.REACT_APP_SUPABASE_URL
+const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY
+const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 function App() {
 
@@ -13,15 +19,37 @@ function App() {
 
   const [lineDataDict, setLineData] = useState({});
 
-  const fetchLineData = () => {
-    axios
-      .get("https://propagatio.onrender.com/fetch")
-      .then((res) => setLineData(res.data))
-      .catch((err) => console.log(err));
-  }
+  // const handleUpdates = (payload) => {
+  //   console.log(payload);
+  // }
+
+  // const mySubscription = supabase
+  //     .from('nivo_data')
+  //     .on('UPDATE', handleUpdates)
+  //     .subscribe()
+
+  // const fetchLineData = () => {
+  //   axios
+  //     .get("https://propagatio.onrender.com/fetch")
+  //     .then((res) => setLineData(res.data))
+  //     .catch((err) => console.log(err));
+  // }
 
   useEffect(() => {
-    fetchLineData()
+    const fetchData = async () => {
+      // eslint-disable-next-line
+      const { data, _ } = await supabase
+        .from('nivo_data')
+        .select('jsonString')
+        .single()
+      console.log(data.jsonString);
+      setLineData(JSON.parse(data.jsonString))
+    }
+
+    fetchData()
+    // make sure to catch any error
+    .catch(console.error);
+    
   }, [])
 
   return (
@@ -44,8 +72,8 @@ function App() {
           Object.entries(lineDataDict).map(
             ([key, value], index) => {
               return (
-                <TabPanel>
-                  <div style={{ height: "70vh", width: "75%", margin: "0 auto"}} key={index}>
+                <TabPanel key={index}>
+                  <div style={{ height: "70vh", width: "75%", margin: "0 auto"}}>
                     <h2 style={{ textAlign: 'center' }} >{key.replaceAll('_', ' ')}</h2>
                     <StatResponsiveLine data={value}/>
                     <hr/>
