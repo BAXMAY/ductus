@@ -19,6 +19,10 @@ function App() {
 
   const [lineDataDict, setLineData] = useState({});
 
+  const [year, setYear] = useState();
+
+  const [month, setMonth] = useState();
+
   // const handleUpdates = (payload) => {
   //   console.log(payload);
   // }
@@ -28,34 +32,57 @@ function App() {
   //     .on('UPDATE', handleUpdates)
   //     .subscribe()
 
-  // const fetchLineData = () => {
-  //   axios
-  //     .get("https://propagatio.onrender.com/fetch")
-  //     .then((res) => setLineData(res.data))
-  //     .catch((err) => console.log(err));
-  // }
+  const fetchData = async () => {
+    // eslint-disable-next-line
+    const { data, _ } = await supabase
+      .from('nivo_data')
+      .select('jsonString')
+      .eq("year", year)
+      .eq("month", month)
+      .single()
+    console.log(data.jsonString);
+    setLineData(JSON.parse(data.jsonString))
+    setYear(year);
+    setMonth(month);
+  }
 
-  useEffect(() => {
-    const fetchData = async () => {
-      // eslint-disable-next-line
-      const { data, _ } = await supabase
-        .from('nivo_data')
-        .select('jsonString')
-        .single()
-      console.log(data.jsonString);
-      setLineData(JSON.parse(data.jsonString))
-    }
+  const fetchLineData = () => {
 
     fetchData()
     // make sure to catch any error
     .catch(console.error);
-    
+  }
+
+  useEffect(() => {
+
+    const today = new Date();
+    today.setDate(0); // 0 will result in the last day of the previous month
+    setYear(today.getFullYear());
+    setMonth(today.getMonth() + 1);
+
+    fetchData()
+    // make sure to catch any error
+    .catch(console.error);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const onChange_cb = (e) => {
+    if (e.target.name === "year") {
+      setYear(e.target.value)
+    } else if (e.target.name === "month") {
+      setMonth(e.target.value)
+    }
+  }
 
   return (
     <div className="App">
       {/* <button onClick={fetchLineData}>FETCH</button> */}
-      <Tabs style={{ marginTop: '50px' }}>
+
+      <input name="month" type="number" value={month} onChange={(e) => onChange_cb(e)}/>
+      <input name="year" type="number" value={year} onChange={(e) => onChange_cb(e)}/>
+      <button onClick={fetchLineData}>Apply</button>
+
+      <Tabs style={{ marginTop: '20px' }}>
         <TabList>
         {
           Object.keys(lineDataDict).map((key, index) => {
