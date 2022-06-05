@@ -8,6 +8,7 @@ import StatResponsiveLine from './components/line';
 import { useEffect, useState } from 'react';
 
 import { createClient } from '@supabase/supabase-js'
+import LoadingSpinner from './components/spinner';
 
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL
 const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY
@@ -35,6 +36,8 @@ function App() {
 
   const [month, setMonth] = useState(getLastMonth());
 
+  const [isLoading, setIsLoading] = useState(false);
+
   // const handleUpdates = (payload) => {
   //   console.log(payload);
   // }
@@ -45,6 +48,8 @@ function App() {
   //     .subscribe()
 
   const fetchData = async () => {
+
+    setIsLoading(true);
     // eslint-disable-next-line
     const { data, _ } = await supabase
       .from('nivo_data')
@@ -60,7 +65,9 @@ function App() {
 
   const fetchLineData = () => {
 
-    fetchData()
+    fetchData().then((res) => {
+      setIsLoading(false)
+    })
     // make sure to catch any error
     .catch(console.error);
   }
@@ -72,7 +79,9 @@ function App() {
     // setYear(today.getFullYear());
     // setMonth(today.getMonth() + 1);
 
-    fetchData()
+    fetchData().then((res) => {
+      setIsLoading(false)
+    })
     // make sure to catch any error
     .catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -92,40 +101,52 @@ function App() {
 
       <input name="month" type="number" value={month} onChange={(e) => onChange_cb(e)}/>
       <input name="year" type="number" value={year} onChange={(e) => onChange_cb(e)}/>
-      <button onClick={fetchLineData}>Apply</button>
+      <button onClick={fetchLineData} disabled={isLoading}>Apply</button>
 
-      <Tabs style={{ marginTop: '20px' }}>
-        <TabList>
-        {
-          Object.keys(lineDataDict).map((key, index) => {
-            let bgColor = 'lightblue'
-            if (structureDict.RP.includes(key)) bgColor = 'yellow'
-            else if (structureDict.SDL.includes(key)) bgColor = 'orange'
-            else if (structureDict.UL.includes(key)) bgColor = 'pink'
-            return (<Tab style={{ backgroundColor: bgColor }} key={index}>{key.replaceAll('_', ' ')}</Tab>)
-          })
-        }
-        </TabList>
+      {isLoading ? 
+      
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px 20px'
+        }}>
+          <LoadingSpinner/>
+        </div>
+      
+        : 
 
-        {
-          Object.entries(lineDataDict).map(
-            ([key, value], index) => {
-              return (
-                <TabPanel key={index}>
-                  <div style={{ height: "70vh", width: "75%", margin: "0 auto"}}>
-                    <h2 style={{ textAlign: 'center' }} >{key.replaceAll('_', ' ')}</h2>
-                    <StatResponsiveLine data={value}/>
-                    <hr/>
-                  </div>
-                </TabPanel>
-              )
-            }
-          )
-        }
-        
+        <Tabs style={{ marginTop: '20px' }}>
+          <TabList>
+          {
+            Object.keys(lineDataDict).map((key, index) => {
+              let bgColor = 'lightblue'
+              if (structureDict.RP.includes(key)) bgColor = 'yellow'
+              else if (structureDict.SDL.includes(key)) bgColor = 'orange'
+              else if (structureDict.UL.includes(key)) bgColor = 'pink'
+              return (<Tab style={{ backgroundColor: bgColor }} key={index}>{key.replaceAll('_', ' ')}</Tab>)
+            })
+          }
+          </TabList>
 
-        
-      </Tabs>
+          {
+            Object.entries(lineDataDict).map(
+              ([key, value], index) => {
+                return (
+                  <TabPanel key={index}>
+                    <div style={{ height: "70vh", width: "75%", margin: "0 auto"}}>
+                      <h2 style={{ textAlign: 'center' }} >{key.replaceAll('_', ' ')}</h2>
+                      <StatResponsiveLine data={value}/>
+                      <hr/>
+                    </div>
+                  </TabPanel>
+                )
+              }
+            )
+          }
+          
+        </Tabs>
+      }
       
     </div>
   );
