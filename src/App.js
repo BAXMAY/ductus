@@ -13,15 +13,27 @@ const supabaseUrl = process.env.REACT_APP_SUPABASE_URL
 const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY
 const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
+const getCurrentYear = () => {
+  const today = new Date();
+  today.setDate(0); // 0 will result in the last day of the previous month
+  return today.getFullYear()
+}
+
+const getLastMonth = () => {
+  const today = new Date();
+  today.setDate(0); // 0 will result in the last day of the previous month
+  return today.getMonth() + 1
+}
+
 function App() {
 
   const structureDict = require('./data/structure_data.json')
 
   const [lineDataDict, setLineData] = useState({});
 
-  const [year, setYear] = useState();
+  const [year, setYear] = useState(getCurrentYear());
 
-  const [month, setMonth] = useState();
+  const [month, setMonth] = useState(getLastMonth());
 
   // const handleUpdates = (payload) => {
   //   console.log(payload);
@@ -55,10 +67,10 @@ function App() {
 
   useEffect(() => {
 
-    const today = new Date();
-    today.setDate(0); // 0 will result in the last day of the previous month
-    setYear(today.getFullYear());
-    setMonth(today.getMonth() + 1);
+    // const today = new Date();
+    // today.setDate(0); // 0 will result in the last day of the previous month
+    // setYear(today.getFullYear());
+    // setMonth(today.getMonth() + 1);
 
     fetchData()
     // make sure to catch any error
